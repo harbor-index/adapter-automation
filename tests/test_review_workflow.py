@@ -120,6 +120,41 @@ class ReviewWorkflowTests(unittest.TestCase):
         self.assertEqual((submitted / 'validation_report.md').read_text(), 'trusted validation')
         self.assertFalse((self.root / 'env').exists())
 
+    def run_validation(self, validator):
+        trusted = self.root / 'trusted-adapters/scripts/validate_adapter.py'
+        trusted.parent.mkdir(parents=True)
+        trusted.write_text(validator)
+        (self.root / 'reviewed-pr').mkdir()
+        script = step('structural-validation', 'Run adapter validation')['run']
+        return subprocess.run(
+            ['bash', '-e', '-c', script], cwd=self.root / 'reviewed-pr',
+            env={**os.environ, 'GITHUB_WORKSPACE': str(self.root), 'ADAPTERS': 'one two',
+                 'PATH': f"{Path(sys.executable).parent}{os.pathsep}{os.environ['PATH']}",
+                 'GITHUB_ENV': str(self.root / 'env')}, capture_output=True, text=True,
+        )
+
+    def test_validation_passes_the_merge_base_as_baseline(self):
+        result = self.run_validation(
+            "import json, sys\n"
+            "# accepts --baseline DIR\n"
+            "json.dump(sys.argv[1:], open('args.json', 'w'))\n"
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        args = json.loads((self.root / 'reviewed-pr/args.json').read_text())
+        self.assertEqual(args[4:], ['--baseline', str(self.root / 'merge-base'), 'one', 'two'])
+        checkout = step('structural-validation', 'Checkout merge base')['with']
+        self.assertEqual(checkout['ref'], '${{ steps.pr.outputs.merge_base }}')
+        self.assertEqual(checkout['path'], 'merge-base')
+
+    def test_validation_skips_baseline_for_older_validators(self):
+        result = self.run_validation(
+            "import json, sys\n"
+            "json.dump(sys.argv[1:], open('args.json', 'w'))\n"
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        args = json.loads((self.root / 'reviewed-pr/args.json').read_text())
+        self.assertEqual(args[4:], ['one', 'two'])
+
     def run_publish(self, job, name, *, pr=None, comments=None, report='{"report":"AI findings"}'):
         (self.root / 'reviewed-pr').mkdir(exist_ok=True)
         (self.root / 'reviewed-pr/validation_report.md').write_text('structural findings')

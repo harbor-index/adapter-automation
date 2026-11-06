@@ -40,9 +40,12 @@ jobs:
         run: |
           echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
-          PR_DATA=$(gh api "repos/${{ github.repository }}/pulls/$PR_NUMBER" --jq '{sha: .head.sha, repo: .head.repo.full_name}')
-          echo "sha=$(echo "$PR_DATA" | jq -r .sha)" >> "$GITHUB_OUTPUT"
+          PR_DATA=$(gh api "repos/${{ github.repository }}/pulls/$PR_NUMBER" --jq '{sha: .head.sha, repo: .head.repo.full_name, base: .base.sha}')
+          HEAD_SHA=$(echo "$PR_DATA" | jq -r .sha)
+          echo "sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
           echo "repo=$(echo "$PR_DATA" | jq -r .repo)" >> "$GITHUB_OUTPUT"
+          MERGE_BASE=$(gh api "repos/${{ github.repository }}/compare/$(echo "$PR_DATA" | jq -r .base)...$HEAD_SHA" --jq .merge_base_commit.sha)
+          echo "merge_base=$MERGE_BASE" >> "$GITHUB_OUTPUT"
 
       - name: Checkout trusted adapter tooling
         uses: actions/checkout@v6
@@ -59,6 +62,14 @@ jobs:
           ref: ${{ steps.pr.outputs.sha }}
           repository: ${{ steps.pr.outputs.repo }}
           path: reviewed-pr
+          persist-credentials: false
+
+      - name: Checkout merge base
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.pr.outputs.merge_base }}
+          path: merge-base
+          sparse-checkout: src
           persist-credentials: false
 
       - name: Set up Python
@@ -83,9 +94,17 @@ jobs:
           ADAPTERS: ${{ steps.detect.outputs.adapters }}
         run: |
           read -r -a adapters <<< "$ADAPTERS"
-          python "$GITHUB_WORKSPACE/trusted-adapters/scripts/validate_adapter.py" \
+          validator="$GITHUB_WORKSPACE/trusted-adapters/scripts/validate_adapter.py"
+          # Errors an adapter already has at the merge base are reported as
+          # pre-existing and do not fail the job. Older validators lack the option.
+          baseline=()
+          if grep -q -- '--baseline' "$validator"; then
+            baseline=(--baseline "$GITHUB_WORKSPACE/merge-base")
+          fi
+          python "$validator" \
             --output validation_report.md \
             --json-output validation_results.json \
+            "${baseline[@]}" \
             "${adapters[@]}" || echo "VALIDATION_FAILED=true" >> "$GITHUB_ENV"
 
       - name: Post validation results
