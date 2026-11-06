@@ -1,0 +1,47 @@
+schema_version = "1.0"
+
+# The answer file is the only thing passed from the agent container to the verifier.
+artifacts = ["/app/result.json"]
+
+[task]
+name = "{{TASK_NAME}}"
+description = "BFCL {{TEST_CATEGORY}} entry {{BFCL_ID}}: write the function calls for a user request to /app/result.json."
+authors = [
+    { name = "Shishir G. Patil", email = "shishirpatil@eecs.berkeley.edu" },
+    { name = "Huanzhi Mao", email = "huanzhimao@eecs.berkeley.edu" },
+    { name = "Fanjia Yan" },
+    { name = "Charlie Cheng-Jie Ji" },
+    { name = "Vishnu Suresh" },
+    { name = "Ion Stoica" },
+    { name = "Joseph E. Gonzalez" },
+]
+keywords = ["bfcl", "function-calling", "tool-use", "{{TEST_CATEGORY}}", "{{LANGUAGE}}"]
+
+[metadata]
+difficulty = "medium"
+category = "function-calling"
+tags = ["function-calling", "tool-use", "{{TEST_CATEGORY}}", "{{GROUP}}"]
+bfcl_id = "{{BFCL_ID}}"
+bfcl_test_category = "{{TEST_CATEGORY}}"
+bfcl_group = "{{GROUP}}"
+bfcl_commit = "{{BFCL_COMMIT}}"
+
+[verifier]
+timeout_sec = 120.0
+user = "root"
+# Grade in a fresh container (same image) that receives only /app/result.json, so
+# nothing left running by the agent can see the ground truth or touch the reward.
+environment_mode = "separate"
+
+[agent]
+timeout_sec = 600.0
+user = "agent"
+# Like the original (a model API call), the agent gets no general internet access.
+# Harbor adds the inference host of agents that call their model from the sandbox.
+network_mode = "allowlist"
+
+[environment]
+build_timeout_sec = 600.0
+cpus = 1
+memory_mb = 2048
+storage_mb = 2048

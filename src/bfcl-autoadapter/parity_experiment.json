@@ -1,0 +1,26 @@
+[
+  {
+    "adapter_name": "bfcl-autoadapter",
+    "agent": "bfcl-fc-agent@1.0.0",
+    "model": "deepseek-v4.1-flash",
+    "date": "2026-11-06",
+    "adapted_benchmark_size": 3635,
+    "parity_benchmark_size": 3635,
+    "number_of_runs": 3,
+    "notes": "Full set (all 3635 tasks of the 13 BFCL single-turn categories) on both sides; the two sides ran at the same time. Original side: BFCL at commit 6ea5797 plus one model entry (deepseek-v4.1-flash-FC, OpenAICompletionsHandler, function-calling mode), `bfcl generate` + `bfcl evaluate`. Harbor side: Harbor 0.25.0 on Daytona with bfcl-fc-agent@1.0.0, which sends the same request as BFCL's OpenAICompletionsHandler (checked byte-identical on all 3635 tasks). Model deepseek-v4.1-flash through an OpenAI-compatible endpoint (served as deepseek-v4-1-flash-261017), temperature 0.001 (BFCL default), store=False, no max_tokens. Metric: accuracy in percent = share of tasks accepted by BFCL's checker. 0 inference errors and 0 trial exceptions; no trial was re-run. Token usage of all parity runs (both sides, incl. a 10-task sanity run): 17.5M input, 5.3M output; the endpoint reports no USD cost.",
+    "original_parity_repo": "https://github.com/MrLYG/gorilla/tree/harbor-parity",
+    "adapter_pr": ["https://github.com/harbor-index/adapter-automation/pull/7"],
+    "dataset_pr": ["https://github.com/harbor-framework/harbor-datasets/pull/275"],
+    "parity_pr": ["https://huggingface.co/datasets/harborframework/parity-experiments/discussions/279"],
+    "metrics": [
+      {
+        "benchmark_name": "BFCL (Berkeley Function Calling Leaderboard)",
+        "metric": "accuracy (%)",
+        "original": "78.12 ± 0.09",
+        "harbor": "78.21 ± 0.02",
+        "original_runs": [77.96, 78.13, 78.27],
+        "harbor_runs": [78.18, 78.24, 78.21]
+      }
+    ]
+  }
+]
