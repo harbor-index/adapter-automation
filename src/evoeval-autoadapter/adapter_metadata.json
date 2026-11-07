@@ -1,0 +1,100 @@
+[
+  {
+    "adapter_name": "evoeval-autoadapter",
+    "adapter_builders": [
+      "Yuangang Li (liyuangang66@gmail.com)"
+    ],
+    "original_benchmark": [
+      {
+        "split": "EvoEval_difficult",
+        "size": 100,
+        "harness": "llm",
+        "supported_agents": [
+          "None"
+        ],
+        "adaptable": true,
+        "notes": "Scope of this adapter (registry dataset and parity experiment). Original harness: one greedy LLM completion per problem (codegen/generate.py, tool/sanitize.py --eof, evoeval/evaluate.py); no agent framework."
+      },
+      {
+        "split": "EvoEval_creative",
+        "size": 100,
+        "harness": "llm",
+        "supported_agents": [
+          "None"
+        ],
+        "adaptable": true,
+        "notes": "Generated with --dataset EvoEval_creative (same grading path); not registered or parity-tested."
+      },
+      {
+        "split": "EvoEval_subtle",
+        "size": 100,
+        "harness": "llm",
+        "supported_agents": [
+          "None"
+        ],
+        "adaptable": true,
+        "notes": "Generated with --dataset EvoEval_subtle (same grading path); not registered or parity-tested."
+      },
+      {
+        "split": "EvoEval_combine",
+        "size": 100,
+        "harness": "llm",
+        "supported_agents": [
+          "None"
+        ],
+        "adaptable": true,
+        "notes": "Generated with --dataset EvoEval_combine (same grading path); not registered or parity-tested."
+      },
+      {
+        "split": "EvoEval_tool_use",
+        "size": 100,
+        "harness": "llm",
+        "supported_agents": [
+          "None"
+        ],
+        "adaptable": true,
+        "notes": "Generated with --dataset EvoEval_tool_use (same grading path); not registered or parity-tested."
+      },
+      {
+        "split": "EvoEval_verbose",
+        "size": 164,
+        "harness": "llm",
+        "supported_agents": [
+          "None"
+        ],
+        "adaptable": false,
+        "notes": "Uses HumanEval+ base/plus inputs and a different grading path; not supported by this adapter."
+      },
+      {
+        "split": "EvoEval_concise",
+        "size": 164,
+        "harness": "llm",
+        "supported_agents": [
+          "None"
+        ],
+        "adaptable": false,
+        "notes": "Uses HumanEval+ base/plus inputs and a different grading path; not supported by this adapter."
+      }
+    ],
+    "harbor_adapter": [
+      {
+        "split": "EvoEval_difficult",
+        "adapted_benchmark_size": 100,
+        "parity_benchmark_size": 100,
+        "parity_sampling_rate": 1.0,
+        "registry_benchmark_size": 100,
+        "added_agents": [
+          "evoeval-codegen@1.0.0"
+        ],
+        "parity_matching_agents": [
+          "evoeval-codegen@1.0.0+deepseek-v4.1-flash"
+        ],
+        "parity_unmatching_agents": [
+          "None"
+        ],
+        "parity_costs": null,
+        "notes": "Registry dataset: all 100 EvoEval_difficult problems. evoeval-codegen ports EvoEval's API harness (prompt, greedy decoding, retry loop, sanitizer) to Harbor for parity. A separate verifier container runs the original checker. parity_costs is null because the per-token price of the parity endpoint is not known; Harbor-side parity usage was 79,227 input and 1,243,544 output tokens over 3 runs (the original side sends the same requests)."
+      }
+    ]
+  }
+]
