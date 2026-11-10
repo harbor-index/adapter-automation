@@ -80,7 +80,7 @@ Package conventions (enforced by `scripts/validate_adapter.py`):
 - `skills/create-adapter/` — scaffold and guide a new adapter build.
 - `skills/review-adapter/` — review benchmark fidelity, grading, and parity evidence.
 - `skills/upload-parity-experiments/` — publish parity/oracle result folders to the
-  `harborframework/parity-experiments` Hugging Face dataset.
+  `kendx/parity-experiments` Hugging Face dataset.
 
 ## CI / Automation
 

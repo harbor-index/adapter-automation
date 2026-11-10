@@ -1,6 +1,6 @@
 ---
 name: upload-parity-experiments
-description: Create or reuse Hugging Face dataset PRs for `harborframework/parity-experiments` and upload Harbor parity/oracle result folders efficiently with sparse checkout, raw git pushes, and Git LFS.
+description: Create or reuse Hugging Face dataset PRs for `kendx/parity-experiments` and upload Harbor parity/oracle result folders efficiently with sparse checkout, raw git pushes, and Git LFS.
 ---
 
 # Upload Parity Experiments
@@ -12,7 +12,7 @@ Adapter result formats and acceptance criteria come from [the versioned adapter 
 ## Why This Skill Exists
 
 - `hf upload-large-folder` can be slow or unreliable for large parity bundles because it pushes through the Hub API commit loop.
-- A normal git clone of `harborframework/parity-experiments` is too expensive because the dataset is very large.
+- A normal git clone of `kendx/parity-experiments` is too expensive because the dataset is very large.
 - Hugging Face dataset PR refs are different from GitHub PR refs and are easy to misuse.
 - Files larger than 10 MiB must be Git LFS-tracked before pushing.
 
@@ -21,7 +21,7 @@ This skill avoids the full clone by fetching only the target PR ref with `--dept
 ## Prereqs
 
 - Ensure Hugging Face authentication is available with discussion-write permission. Either a classic `write` token or a fine-grained token with global `discussion.write` enabled at <https://huggingface.co/settings/tokens>. A read-only or narrowly-scoped token will cause `create_pr.py` to fail with HTTP 403.
-- Keep the target dataset fixed to `harborframework/parity-experiments` unless the user explicitly asks for another repo.
+- Keep the target dataset fixed to `kendx/parity-experiments` unless the user explicitly asks for another repo.
 - Accept any local upload source that already contains the final files the user wants to publish.
 
 ## Preferred Workflow
@@ -60,7 +60,7 @@ mkdir -p /tmp/parity-experiments-pr<number>
 cd /tmp/parity-experiments-pr<number>
 
 git init
-git remote add origin git@hf.co:datasets/harborframework/parity-experiments
+git remote add origin git@hf.co:datasets/kendx/parity-experiments
 git config core.sparseCheckout true
 git sparse-checkout init --cone
 git sparse-checkout set adapters/<adapter_name>
@@ -124,7 +124,7 @@ GIT_SSH_COMMAND='ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10' \
 Use this discussion URL in `parity_experiment.json`:
 
 ```text
-https://huggingface.co/datasets/harborframework/parity-experiments/discussions/<number>
+https://huggingface.co/datasets/kendx/parity-experiments/discussions/<number>
 ```
 
 ## Monitoring And Retry
@@ -138,7 +138,7 @@ When raw `git push` is running, check the live output first. Large pushes often 
 Useful checks:
 
 ```bash
-git ls-remote git@hf.co:datasets/harborframework/parity-experiments refs/pr/<number>
+git ls-remote git@hf.co:datasets/kendx/parity-experiments refs/pr/<number>
 ```
 
 ```bash
@@ -158,7 +158,7 @@ Use `hf upload-large-folder` only as a fallback when raw git is unavailable or t
 You can still create the PR with the bundled helper and upload to the PR revision:
 
 ```bash
-hf upload-large-folder harborframework/parity-experiments \
+hf upload-large-folder kendx/parity-experiments \
   <local-folder> \
   --repo-type dataset \
   --revision refs/pr/<pr-number> \
@@ -170,7 +170,7 @@ hf upload-large-folder harborframework/parity-experiments \
 ## Guardrails
 
 - Do not upload the Harbor repo itself by accident. Upload only the intended local results folder.
-- Do not fall back to a full clone of `harborframework/parity-experiments`.
+- Do not fall back to a full clone of `kendx/parity-experiments`.
 - Do not modify the repo-root `.gitattributes`. Put any adapter-specific LFS rules in `adapters/<adapter_name>/.gitattributes` instead.
 - Always remove or exclude `.DS_Store`.
 - Before pushing, make sure every file larger than 10 MiB is LFS-tracked.

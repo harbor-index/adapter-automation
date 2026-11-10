@@ -10,7 +10,7 @@ from pathlib import Path
 from huggingface_hub import HfApi
 
 
-DEFAULT_REPO_ID = "harborframework/parity-experiments"
+DEFAULT_REPO_ID = "kendx/parity-experiments"
 
 
 def _read_description(args: argparse.Namespace) -> str | None:

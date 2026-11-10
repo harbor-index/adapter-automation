@@ -9,7 +9,7 @@ Build a Harbor adapter for one benchmark in this repository, from the original b
 
 1. the adapter, to `harbor-index/adapter-automation`;
 2. the dataset, to `harbor-framework/harbor-datasets`;
-3. the parity and oracle results, to the Hugging Face dataset `harborframework/parity-experiments`.
+3. the parity and oracle results, to the Hugging Face dataset `kendx/parity-experiments`.
 
 The person answers questions only at the start (Step 0). After that, work without help. Stop and ask only for an environment problem (see "When to stop and ask").
 
@@ -51,7 +51,7 @@ Other adapters:
 For this benchmark, do not open:
 
 - its folders and pull requests in `harbor-framework/adapters`, `harbor-index/adapters` and `harbor-framework/harbor`;
-- its dataset in `harbor-framework/harbor-datasets` (formerly `laude-institute/harbor-datasets`), in the Hugging Face datasets `harborframework/harbor-datasets` and `harborframework/parity-experiments`, and in the Harbor registry (do not download or run it, for example with `harbor run -d` or `harbor datasets`);
+- its dataset in `harbor-framework/harbor-datasets` (formerly `laude-institute/harbor-datasets`), in the Hugging Face datasets `harborframework/harbor-datasets`, `harborframework/parity-experiments` and `kendx/parity-experiments`, and in the Harbor registry (do not download or run it, for example with `harbor run -d` or `harbor datasets`);
 - forks of the original benchmark that add Harbor support, and Harbor-related branches or pull requests in the original repository.
 
 Also do not open anything in `harbor-index/adapter-automation` except its `main` branch: no other branches, pull requests, issues or forks of other people.
@@ -190,7 +190,7 @@ Decide the number of tasks and the tasks yourself:
    git remote add upstream https://github.com/harbor-framework/harbor-datasets.git && git fetch --filter=blob:none upstream
    ```
    If the fork already exists, `gh repo fork` only says so. Make the branch `autoadapter-<adapter>` from `upstream/main`, copy `datasets/<adapter>` (with its `dataset.toml`), commit, push to `origin`, and open the pull request to `harbor-framework/harbor-datasets` the same way. Do not open other folders of this repository.
-4. Parity results (guide step 7). Upload them to `harborframework/parity-experiments` with `skills/upload-parity-experiments/SKILL.md`.
+4. Parity results (guide step 7). Upload them to `kendx/parity-experiments` with `skills/upload-parity-experiments/SKILL.md`.
 5. Original-side fork. If you forked the original benchmark for parity (guide step 4), push your branch `harbor-parity` to the person's fork, update its README (guide step 9), and use its URL as `original_parity_repo`.
 6. Links. Put the URLs of the three pull requests in the link fields and in the Links sections of the pull request bodies (`gh pr edit <url> --body-file <file>`). Commit and push the branches again.
 7. Do not open drafts, do not request reviews, and do not mention anyone. Never merge a pull request, not even your own.
@@ -203,7 +203,7 @@ Rules for every title and body:
 - Only true numbers from the result files. Put details in the README and point to it (Notes & Caveats).
 - No implementation details (internal file formats, user accounts, markers). No internal process (review rounds, `DECISIONS.md`, `REPORT.md`). No experiment context: do not compare with another adapter, and do not write that an agent built it (the title prefix says that this is an experiment).
 
-(a) Hugging Face `harborframework/parity-experiments`. Title: `[AutoAdapter Experiment] Add parity experiments for <adapter>`. Body:
+(a) Hugging Face `kendx/parity-experiments`. Title: `[AutoAdapter Experiment] Add parity experiments for <adapter>`. Body:
 
 ```
 Parity and oracle results for the `<adapter>` adapter (harbor-index/adapter-automation#<n>), in `adapters/<adapter>/`.
