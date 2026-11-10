@@ -1,0 +1,28 @@
+# Reference config for the full adapted dataset (run from the repository root).
+#   harbor run -c src/evoeval-autoadapter/run_evoeval-autoadapter.yaml
+jobs_dir: jobs
+n_attempts: 1
+timeout_multiplier: 1.0
+orchestrator:
+  type: local
+  n_concurrent_trials: 8
+  quiet: false
+environment:
+  type: docker
+  # type: daytona
+  delete: true
+# Default: oracle agent (EvoEval canonical solutions).
+agents:
+  - name: oracle
+# Parity agent: EvoEval's original API code-generation harness ported to Harbor.
+# Needs PYTHONPATH=src/evoeval-autoadapter/src and OPENAI_API_KEY / OPENAI_BASE_URL.
+# agents:
+#   - import_path: evoeval_autoadapter.codegen_agent:EvoEvalCodegenAgent
+#     model_name: openai/deepseek-v4.1-flash
+#
+# Standard CLI agent:
+# agents:
+#   - name: terminus-2
+#     model_name: openai/deepseek-v4.1-flash
+datasets:
+  - path: datasets/evoeval-autoadapter
