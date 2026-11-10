@@ -1,0 +1,27 @@
+[project]
+name = "harbor-bfcl-autoadapter-adapter"
+version = "0.1.0"
+description = "Harbor adapter for BFCL (Berkeley Function Calling Leaderboard) single-turn categories"
+readme = "README.md"
+authors = [
+    { name = "Yuangang Li", email = "liyuangang66@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.86.0",
+]
+
+[project.scripts]
+bfcl-autoadapter = "bfcl_autoadapter.main:main"
+
+[dependency-groups]
+dev = [
+    "harbor==0.25.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.8.0,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "bfcl_autoadapter"

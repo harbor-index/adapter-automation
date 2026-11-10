@@ -1,0 +1,34 @@
+# Reference job config for the full BFCL single-turn dataset (3635 tasks).
+# Run from the repository root:  harbor run -c src/bfcl-autoadapter/run_bfcl-autoadapter.yaml
+jobs_dir: jobs
+n_attempts: 1
+timeout_multiplier: 1.0
+n_concurrent_trials: 8
+environment:
+  type: docker
+  # With Daytona, reuse one snapshot for all tasks (they share one environment):
+  # type: daytona
+  # kwargs:
+  #   auto_snapshot: true
+  force_build: false
+  delete: true
+datasets:
+  - path: datasets/bfcl-autoadapter
+
+# Default: oracle (reference answers built from BFCL's ground truth)
+agents:
+  - name: oracle
+
+# BFCL function-calling agent used for parity. Harbor must be able to import this
+# adapter package, e.g.
+#   uvx --python 3.12 --from "harbor[daytona]==0.25.0" --with ./src/bfcl-autoadapter harbor run -c ...
+# agents:
+#   - import_path: bfcl_autoadapter.agents.bfcl_fc_agent:BfclFcAgent
+#     model_name: openai/deepseek-v4.1-flash
+#     kwargs:
+#       temperature: 0.001
+#
+# A standard terminal agent:
+# agents:
+#   - name: terminus-2
+#     model_name: openai/deepseek-v4.1-flash
