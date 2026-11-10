@@ -1,0 +1,38 @@
+[project]
+name = "harbor-cooperbench-autoadapter-adapter"
+version = "0.1.0"
+description = "Harbor adapter for CooperBench: two coding agents, one feature each, graded on the merged result"
+readme = "README.md"
+authors = [
+    { name = "Han Xu", email = "hanxu8@illinois.edu" }
+]
+requires-python = ">=3.11"
+# Task generation needs only the standard library and git.
+dependencies = []
+
+[project.optional-dependencies]
+# The coop agent (cooperbench_autoadapter.coop_agent:CooperBenchCoopAgent) runs inside the
+# Harbor process; these are the runtime dependencies of the vendored mini-swe-agent v2 code.
+agent = [
+    "litellm==1.108.3",
+    "mcp==2.3.0",  # litellm 1.108.3 imports mcp.types.CacheableResult inside completion()
+    "fakeredis>=2.33",
+    "redis>=7.1",
+    "jinja2>=3.0",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "tenacity>=8.0",
+    "platformdirs>=3.0",
+    "python-dotenv>=1.0",
+    "rich>=13.0",
+]
+
+[project.scripts]
+cooperbench-autoadapter = "cooperbench_autoadapter.main:main"
+
+[build-system]
+requires = ["uv_build>=0.12.19,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "cooperbench_autoadapter"
