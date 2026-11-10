@@ -1,0 +1,41 @@
+[
+  {
+    "adapter_name": "arc-agi-2-autoadapter",
+    "adapter_builders": [
+      "Yuangang Li (liyuangang66@gmail.com)"
+    ],
+    "original_benchmark": [
+      {
+        "split": "evaluation",
+        "size": 167,
+        "harness": "llm",
+        "supported_agents": [
+          "claude-agent-sdk@0.2.174",
+          "codex@unpinned"
+        ],
+        "adaptable": true,
+        "notes": "120 public evaluation tasks with 167 test inputs; the size counts test inputs, the unit of one Harbor task. The official ARC Prize harness (arcprize/arc-agi-benchmarking) mainly calls model APIs directly (one prompt per test input, 2 attempts). It also has a Claude Agent SDK provider (claude-agent-sdk==0.2.174 in its pyproject.toml) and a Codex CLI provider that runs an externally installed codex executable (version not pinned). The 1,000 training tasks (1,076 test inputs) can be generated with --split training but are not part of the registered dataset."
+      }
+    ],
+    "harbor_adapter": [
+      {
+        "split": "evaluation",
+        "adapted_benchmark_size": 167,
+        "parity_benchmark_size": 167,
+        "parity_sampling_rate": 1.0,
+        "registry_benchmark_size": 167,
+        "added_agents": [
+          "arc-harness-chat@1.0.0"
+        ],
+        "parity_matching_agents": [
+          "arc-harness-chat@1.0.0+deepseek-v4.1-flash"
+        ],
+        "parity_unmatching_agents": [
+          "None"
+        ],
+        "parity_costs": null,
+        "notes": "registry_benchmark_size is the number of tasks requested for registration (all 167). Parity on all 167 tasks, 3 runs per side; ARC-AGI-2 score original 77.08 ± 1.32 vs Harbor 77.59 ± 0.67 (overlapping ranges). parity_costs is null because the USD price of the gateway used is not known; token use for the three parity runs: original side 7.30M input / 47.09M output tokens, Harbor side 7.37M input / 48.16M output tokens. Standard CLI agent check (Harbor only): claude-code@2.1.311 + deepseek-v4.1-flash, see README."
+      }
+    ]
+  }
+]
