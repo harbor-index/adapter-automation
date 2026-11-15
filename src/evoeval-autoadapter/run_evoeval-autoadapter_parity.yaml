@@ -1,0 +1,24 @@
+# Harbor-side parity run (one run; repeat with a new job name for runs 2 and 3).
+#   PYTHONPATH=src/evoeval-autoadapter/src \
+#     harbor run -c src/evoeval-autoadapter/run_evoeval-autoadapter_parity.yaml --job-name <name>
+# Needs OPENAI_API_KEY / OPENAI_BASE_URL (OpenAI-compatible endpoint serving the model)
+# and DAYTONA_API_KEY.
+jobs_dir: jobs
+n_attempts: 1
+timeout_multiplier: 1.0
+orchestrator:
+  type: local
+  n_concurrent_trials: 15
+  quiet: false
+environment:
+  type: daytona
+  delete: true
+agents:
+  - import_path: evoeval_autoadapter.codegen_agent:EvoEvalCodegenAgent
+    model_name: openai/deepseek-v4.1-flash
+    kwargs:
+      max_new_tokens: 32768
+      request_timeout_sec: 900
+      temperature: 0.0
+datasets:
+  - path: datasets/evoeval-autoadapter

@@ -1,0 +1,40 @@
+[
+  {
+    "adapter_name": "evoeval-autoadapter",
+    "agent": "evoeval-codegen@1.0.0",
+    "model": "deepseek-v4.1-flash",
+    "date": "2026-11-05",
+    "adapted_benchmark_size": 100,
+    "parity_benchmark_size": 100,
+    "number_of_runs": 3,
+    "notes": "Both sides run EvoEval's API harness: one greedy chat completion per problem with the original prompt (system 'You are a helpful assistant.'; user 'Please complete the following code snippet.' + prompt), temperature 0, n=1, then tool/sanitize.py --eof and the original checker (evoeval==0.1.0, evalplus==0.2.0, Python 3.9). Original side: fork MrLYG/evoeval@harbor-parity-autoadapter (codegen/generate.py + tool/sanitize.py + evoeval/evaluate.py). Harbor side: evoeval-codegen@1.0.0 on Daytona, Harbor 0.25.0, separate verifier container. Same settings on both sides: max_tokens = prompt tokens + 32768 (reasoning model; original 512), per-request time limit 900 s (original 100 s), prompts sent with LF line endings (10 prompts are CRLF in the release data), openai SDK 3.46.0 defaults. Served model ID deepseek-v4-1-flash-261017. All 100 EvoEval_difficult tasks; runs 1 alone, runs 2 and 3 concurrently; 15 concurrent requests per side. No task failed with an error. Harbor-side usage over 3 runs: 79,227 input and 1,243,544 output tokens. Standard CLI agent check (Harbor side only, 1 run, 100 tasks): terminus-2@2.0.0 + deepseek-v4.1-flash = 67.0% (2 agent timeouts scored 0).",
+    "original_parity_repo": "https://github.com/MrLYG/evoeval/tree/harbor-parity-autoadapter",
+    "adapter_pr": [
+      "https://github.com/harbor-index/adapter-automation/pull/3"
+    ],
+    "dataset_pr": [
+      "https://github.com/harbor-framework/harbor-datasets/pull/273"
+    ],
+    "parity_pr": [
+      "https://huggingface.co/datasets/harborframework/parity-experiments/discussions/277"
+    ],
+    "metrics": [
+      {
+        "benchmark_name": "EvoEval_difficult",
+        "metric": "pass@1 (%)",
+        "original": "58.00 ± 0.5774",
+        "harbor": "58.33 ± 0.3333",
+        "original_runs": [
+          58.0,
+          57.0,
+          59.0
+        ],
+        "harbor_runs": [
+          58.0,
+          58.0,
+          59.0
+        ]
+      }
+    ]
+  }
+]
