@@ -1,0 +1,64 @@
+[
+  {
+    "adapter_name": "cooperbench-autoadapter",
+    "adapter_builders": [
+      "Han Xu (hanxu8@illinois.edu)"
+    ],
+    "original_benchmark": [
+      {
+        "split": "coop",
+        "size": 652,
+        "harness": "agent",
+        "supported_agents": [
+          "mini_swe_agent_v2@63b9d44",
+          "claude_code@63b9d44",
+          "codex@63b9d44",
+          "openhands_sdk@63b9d44",
+          "swe_agent@63b9d44"
+        ],
+        "adaptable": true,
+        "notes": "Coop setting (the benchmark default): two agents, one feature each, messaging on, shared git off; all 652 feature pairs of dataset/subsets/all.json (30 tasks, 12 repositories, 199 features). Agent versions are the CooperBench commit 63b9d44."
+      },
+      {
+        "split": "solo",
+        "size": 652,
+        "harness": "agent",
+        "supported_agents": [
+          "mini_swe_agent_v2@63b9d44"
+        ],
+        "adaptable": true,
+        "notes": "One agent implements both features of a pair. Served by the same 652 tasks: a single Harbor agent receives both features in instruction.md (the solo prompt layout with a short header). Not parity-tested as a separate setting."
+      },
+      {
+        "split": "team",
+        "size": 1409,
+        "harness": "agent",
+        "supported_agents": [
+          "mini_swe_agent_v2@63b9d44"
+        ],
+        "adaptable": false,
+        "notes": "Three-agent groups: team3_all (1409 groups over 29 tasks) and its 250-group subset team3_250. Out of scope; the adapter generates two-agent feature pairs only."
+      }
+    ],
+    "harbor_adapter": [
+      {
+        "split": "coop",
+        "adapted_benchmark_size": 652,
+        "parity_benchmark_size": 15,
+        "parity_sampling_rate": 0.023,
+        "registry_benchmark_size": 652,
+        "added_agents": [
+          "cooperbench-coop-mini-swe-agent-v2@63b9d44"
+        ],
+        "parity_matching_agents": [
+          "cooperbench-coop-mini-swe-agent-v2@63b9d44+openai/deepseek-v4.1-flash"
+        ],
+        "parity_unmatching_agents": [
+          "None"
+        ],
+        "parity_costs": "$37",
+        "notes": "Parity on a 15-pair subset (split parity: stratified by repository, seed 42), 3 runs per side: original 55.56 ± 8.01, Harbor 55.56 ± 5.88 (pass rate, %). Parity cost is an estimate from the token counts of all parity model calls (both sides, sanity runs, standard-agent run) at the model's list price. Oracle: 652/652. Standard agent: Claude Code 2.1.311 with the same model, 11/15 on the parity set (one run)."
+      }
+    ]
+  }
+]
