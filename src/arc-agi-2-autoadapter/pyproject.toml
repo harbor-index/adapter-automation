@@ -1,0 +1,21 @@
+[project]
+name = "harbor-arc-agi-2-autoadapter-adapter"
+version = "0.1.0"
+description = "Harbor adapter for ARC-AGI-2: one task per test input, exact-match grid scoring"
+readme = "README.md"
+authors = [
+    { name = "Yuangang Li", email = "liyuangang66@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+arc-agi-2-autoadapter = "arc_agi_2_autoadapter.main:main"
+arc-agi-2-autoadapter-score = "arc_agi_2_autoadapter.score:main"
+
+[build-system]
+requires = ["uv_build>=0.8.0,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "arc_agi_2_autoadapter"
