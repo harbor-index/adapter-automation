@@ -1,0 +1,30 @@
+# Reference config for HLE (Humanity's Last Exam) in Harbor.
+# Generate the tasks first:  cd src/hle-autoadapter && uv run hle-autoadapter
+# Run from the repository root:  harbor run -c src/hle-autoadapter/run_hle-autoadapter.yaml
+#
+# The verifier needs an OpenAI-compatible judge: export OPENAI_API_KEY (and OPENAI_BASE_URL
+# for a non-OpenAI endpoint). JUDGE_MODEL defaults to gpt-5-mini.
+jobs_dir: jobs
+n_attempts: 1
+timeout_multiplier: 1.0
+orchestrator:
+  type: local
+  n_concurrent_trials: 8
+  quiet: false
+environment:
+  type: docker
+  # type: daytona
+  force_build: false
+  delete: true
+agents:
+  # Default: oracle (reference answers, graded by the judge)
+  - name: oracle
+  # Parity agent: Claude Code with web tools disabled. For a non-Anthropic model behind an
+  # Anthropic-compatible endpoint, export ANTHROPIC_BASE_URL and ANTHROPIC_API_KEY.
+  # - name: claude-code
+  #   model_name: anthropic/deepseek-v4.1-flash
+  #   kwargs:
+  #     version: "2.1.311"
+  #     disable_web_search: true
+datasets:
+  - path: datasets/hle-autoadapter

@@ -1,0 +1,40 @@
+[
+  {
+    "adapter_name": "hle-autoadapter",
+    "agent": "claude-code@2.1.311",
+    "model": "deepseek-v4-1-flash-261017",
+    "date": "2026-11-07",
+    "adapted_benchmark_size": 2499,
+    "parity_benchmark_size": 128,
+    "number_of_runs": 3,
+    "notes": "Model requested as deepseek-v4.1-flash through an Anthropic-compatible gateway; the gateway served deepseek-v4-1-flash-261017. Agent endpoint on both sides: a single-model proxy (hle_eval/model_proxy/ in the fork) that forwards only Messages API calls for deepseek-v4.1-flash without server-side tools; the agents never had the gateway key. Claude Code with web tools disabled (--disallowedTools WebSearch,WebFetch), permission mode bypassPermissions, 1,800 s per question, no internet during the agent phase except the model endpoint, Python 3.11.16 with the original tool packages, 1 CPU / 2 GB / 4 GB. Judge gpt-5-mini (gpt-5-mini-2025-08-07) on both sides with the original judge prompt and openai==1.57.0 (the original default judge o3-mini-2025-01-31 was not available). Original side: hle_eval/run_agent_predictions.py on the fork runs the same Claude Code binary in one Daytona sandbox per question from the same Dockerfile, and the original run_judge_results.py grades it. Parity set: 128 of the 2,499 tasks, stratified by category, modality and answer type (seed 42), excluding the one task with a corrected reference answer. Accuracy in percent over the 128 tasks; a missing answer counts as wrong on both sides. Agent timeouts: 88 (Harbor) and 81 (original) of 384 trials per side; Claude Code's 32,000-token output limit: 18 (Harbor) and 24 (original). During the runs the proxy forwarded 10,951 calls, all for deepseek-v4.1-flash, and refused 128 (other models, server-side web/code tools, other API paths, missing token). In 22 (Harbor) and 30 (original) trials the agent also sent its own requests to the same model through the proxy; counting these trials as wrong gives original 34.64 ± 0.52 and Harbor 34.38 ± 0.45. An earlier set of 3 runs per side, in which the agents had the gateway key and in 27 of 768 trials used it for other models or web tools, gave original 33.07 ± 2.03 and Harbor 34.38 ± 0.78; its data is in the parity upload (earlier_direct_gateway/).",
+    "original_parity_repo": "https://github.com/MrLYG/hle/tree/harbor-parity",
+    "adapter_pr": [
+      "https://github.com/harbor-index/adapter-automation/pull/10"
+    ],
+    "dataset_pr": [
+      "https://github.com/harbor-framework/harbor-datasets/pull/278"
+    ],
+    "parity_pr": [
+      "https://huggingface.co/datasets/harborframework/parity-experiments/discussions/282"
+    ],
+    "metrics": [
+      {
+        "benchmark_name": "HLE (Humanity's Last Exam)",
+        "metric": "accuracy (%)",
+        "original": "35.16 ± 0.45",
+        "harbor": "34.64 ± 0.52",
+        "original_runs": [
+          35.94,
+          34.38,
+          35.16
+        ],
+        "harbor_runs": [
+          35.16,
+          35.16,
+          33.59
+        ]
+      }
+    ]
+  }
+]

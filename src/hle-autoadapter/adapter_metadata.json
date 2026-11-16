@@ -1,0 +1,40 @@
+[
+  {
+    "adapter_name": "hle-autoadapter",
+    "adapter_builders": [
+      "Yuangang Li (liyuangang66@gmail.com)"
+    ],
+    "original_benchmark": [
+      {
+        "split": "test",
+        "size": 2500,
+        "harness": "llm",
+        "supported_agents": [
+          "None"
+        ],
+        "adaptable": true,
+        "notes": "cais/hle test split, 2,500 questions (342 with an image). The original harness makes one chat-completions call per question and grades it with an LLM judge (o3-mini-2025-01-31 by default). The adapter excludes 1 question whose reference answer is a placeholder and corrects 1 reference answer with a typo (README, Notes & Caveats)."
+      }
+    ],
+    "harbor_adapter": [
+      {
+        "split": "test",
+        "adapted_benchmark_size": 2499,
+        "parity_benchmark_size": 128,
+        "parity_sampling_rate": 0.0512,
+        "registry_benchmark_size": 2499,
+        "added_agents": [
+          "None"
+        ],
+        "parity_matching_agents": [
+          "claude-code@2.1.311+deepseek-v4-1-flash-261017"
+        ],
+        "parity_unmatching_agents": [
+          "None"
+        ],
+        "parity_costs": "$60",
+        "notes": "Parity on a 128-task stratified subset (seed 42), 3 runs per side, judge gpt-5-mini on both sides. parity_costs is an estimate for the reported runs (3 per side behind the single-model proxy) from token counts at DeepSeek's published peak prices plus the judge calls; all parity work, including an earlier set of 3 runs per side without the proxy and the sanity checks, cost about $120."
+      }
+    ]
+  }
+]
