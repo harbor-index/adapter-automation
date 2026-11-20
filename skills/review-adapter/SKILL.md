@@ -142,7 +142,9 @@ Open with the decision or the first change the author can make. Give the
 reviewed SHA and contract revision in a short provenance line. At the relevant
 line, describe what happens, why it affects the result and how to check the fix.
 When the author knows something the code cannot tell you, ask a specific
-question.
+question. Use the terms the author uses for their code and give each request
+its own sentence. If a missing result affects your decision, ask for the
+specific score or log that would settle it.
 
 For each material finding, include the applicable stable requirement ID from the
 specification (or exact section when no ID exists), exact source lines at the
