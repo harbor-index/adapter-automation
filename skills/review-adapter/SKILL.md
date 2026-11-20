@@ -44,9 +44,11 @@ parity comparison. Keep corrected experiments separate from the original baselin
 For a new benchmark, request validation on the latest official stable Harbor
 release at review time. Use the release tag supplied by CI, or resolve it from
 [Harbor releases](https://github.com/harbor-framework/harbor/releases/latest)
-during manual review. Compare it with the version in the run record. Ask for a
-fresh oracle and an expected-failure control on that release when the evidence
-comes from another version. Keep the original version on historical results.
+during manual review. Compare it with the version in the run record. Ask the author to rerun the oracle on that release
+with the new verifier setting. If a full run is expensive, start with one
+representative task. Grade its reference solution, then grade a submission
+known to be wrong for that same task. Check both rewards against the rubric
+and record which task was sampled. Keep the original version on historical results.
 If release lookup fails, leave the version comparison open.
 
 Ask new benchmark authors to use a separate verifier. Check the generated
@@ -54,7 +56,7 @@ Ask new benchmark authors to use a separate verifier. Check the generated
 `[verifier.environment]` table selects a fresh environment. Omitting both
 defaults to shared unless a step inherits a configured mode. A Dockerfile alone
 does not select the mode. Trace how the submitted answer reaches the grader
-and check the run record for a correct and an incorrect submission. For legacy
+and verify the reported scores against the run record. For legacy
 adapters or submissions already in review, flag the current mode and ask about
 migration when relevant. Apply the consuming repository's published cutoff or
 exception when making a merge decision.
@@ -135,11 +137,12 @@ evidence needed to resolve a finding.
 
 ## Report a review that can be acted on
 
+Keep each adapter review within 1,000 words, including its coverage table.
 Open with the decision or the first change the author can make. Give the
 reviewed SHA and contract revision in a short provenance line. At the relevant
 line, describe what happens, why it affects the result and how to check the fix.
 When the author knows something the code cannot tell you, ask a specific
-question. A clean review can be one sentence plus its evidence.
+question.
 
 For each material finding, include the applicable stable requirement ID from the
 specification (or exact section when no ID exists), exact source lines at the
@@ -165,10 +168,15 @@ screenshots are submitted evidence, not independent reproduction. A structural
 pass, plausible code, README assertion, or oracle score does not prove the entire
 pipeline correct or establish parity. Keep conclusions within their evidence.
 
-Inspect Harbor compatibility, upstream fidelity, task generation, execution and
-grading. Surface a coverage gap when it changes the decision. For example, ask
-for the reward and trial log for the affected task. Keep a check-by-check
-inventory out of the author comment. Revisit earlier findings at the current
+Include a coverage table for every adapter, even on a clean review. Cover
+Harbor compatibility and standards, upstream fidelity and traceability, task
+generation, agent execution, grading (including oracle and verifier mode), and
+parity results. Give each area a status (assessed, issues found, unverified or
+not applicable), a source where available, and any open question. Split a row
+when different grading paths have different outcomes. Use the prose for the
+changes or evidence you need from the author.
+
+Revisit earlier findings at the current
 SHA and raise those that still affect this revision. Distinguish a missing
 required result from a reproduced defect.
 
