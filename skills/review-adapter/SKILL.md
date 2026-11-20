@@ -39,6 +39,33 @@ When sources disagree, cite the exact code and document sections. Report the
 disagreement rather than silently correcting upstream behavior in one side of a
 parity comparison. Keep corrected experiments separate from the original baseline.
 
+## Check the Harbor release and verifier
+
+For a new benchmark, request validation on the latest official stable Harbor
+release at review time. Use the release tag supplied by CI, or resolve it from
+[Harbor releases](https://github.com/harbor-framework/harbor/releases/latest)
+during manual review. Compare it with the version in the run record. Ask for a
+fresh oracle and an expected-failure control on that release when the evidence
+comes from another version. Keep the original version on historical results.
+If release lookup fails, leave the version comparison open.
+
+Ask new benchmark authors to use a separate verifier. Check the generated
+`task.toml` and each step override. Explicit `separate` or a
+`[verifier.environment]` table selects a fresh environment. Omitting both
+defaults to shared unless a step inherits a configured mode. A Dockerfile alone
+does not select the mode. Trace how the submitted answer reaches the grader
+and check the run record for a correct and an incorrect submission. For legacy
+adapters or submissions already in review, flag the current mode and ask about
+migration when relevant. Apply the consuming repository's published cutoff or
+exception when making a merge decision.
+
+When only the grading environment changes, regrade the saved outputs for the
+same parity cohort. Compare scores by task and run, then recalculate the reported
+metric and SEM. Investigate any changes. Reuse the original upstream results if
+their inputs and settings still match. Request new agent trials for affected
+cases when the agent-facing task changed or the saved outputs cannot reproduce
+the state needed for grading.
+
 ## Trace what is being measured
 
 Follow one representative task from dataset generation through the agent-visible
@@ -108,12 +135,11 @@ evidence needed to resolve a finding.
 
 ## Report a review that can be acted on
 
-Aim for 600–1,000 words per adapter, including tables. Open with the verdict,
-reviewed SHA, contract version/revision, and available evidence. Keep provenance
-and coverage in compact tables. Group related
-symptoms under one root cause and omit passed-check inventories and style nits.
-Do not repeat findings in a closing summary. Do not suppress material blockers to
-meet the target; group them and use compact lists instead.
+Open with the decision or the first change the author can make. Give the
+reviewed SHA and contract revision in a short provenance line. At the relevant
+line, describe what happens, why it affects the result and how to check the fix.
+When the author knows something the code cannot tell you, ask a specific
+question. A clean review can be one sentence plus its evidence.
 
 For each material finding, include the applicable stable requirement ID from the
 specification (or exact section when no ID exists), exact source lines at the
@@ -139,22 +165,16 @@ screenshots are submitted evidence, not independent reproduction. A structural
 pass, plausible code, README assertion, or oracle score does not prove the entire
 pipeline correct or establish parity. Keep conclusions within their evidence.
 
-Include a compact coverage table per adapter for Harbor standards, upstream
-fidelity/traceability, and implementation correctness (generation, agent execution,
-and grading). For each dimension give assessed / issues found / unverified / not
-applicable, evidence references, and remaining gaps. Split only where distinct
-paths differ. Assessed means the cited evidence was inspected, not a runtime pass.
-Do not print the full checklist or repeat findings under multiple headings.
+Inspect Harbor compatibility, upstream fidelity, task generation, execution and
+grading. Surface a coverage gap when it changes the decision. For example, ask
+for the reward and trial log for the affected task. Keep a check-by-check
+inventory out of the author comment. Revisit earlier findings at the current
+SHA and raise those that still affect this revision. Distinguish a missing
+required result from a reproduced defect.
 
-Separate acceptance blockers, disclosed limitations, and unverified checks. Missing
-evidence is not a reproduced defect, but cannot satisfy a required check. Do not
-relax required parity/oracle evidence or treat an integrity defect as acceptable
-just because upstream shares it. When prior reviews are available, independently
-re-check their findings at the current SHA and mark resolved / still present /
-unverified. If history is unavailable, do not claim no earlier findings exist.
 Link reproducible commands, pinned revisions, and sanitized artifacts. Never copy
 credentials or raw private model reasoning into a review.
 
-Before returning the report, remove repeated explanations, check the length, and
+Before returning the report, remove repeated explanations and
 verify that every code/configuration finding has a pinned source link. Keep
 unverified checks distinct from reproduced defects.
