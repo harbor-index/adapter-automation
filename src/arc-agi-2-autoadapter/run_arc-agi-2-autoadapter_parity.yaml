@@ -1,0 +1,26 @@
+# Parity config: the parity agent (one attempt = the ARC Prize harness call),
+# 2 attempts per test input, on all 167 tasks.
+# Run from the repository root:
+#   export OPENAI_API_KEY=...            # and OPENAI_BASE_URL for an OpenAI-compatible gateway
+#   PYTHONPATH=src/arc-agi-2-autoadapter/src harbor run \
+#     -c src/arc-agi-2-autoadapter/run_arc-agi-2-autoadapter_parity.yaml --job-name <name>
+# Then: (cd src/arc-agi-2-autoadapter && uv run arc-agi-2-autoadapter-score ../../jobs/<name>)
+jobs_dir: jobs
+n_attempts: 2
+timeout_multiplier: 1.0
+orchestrator:
+  type: local
+  n_concurrent_trials: 64
+  quiet: true
+environment:
+  type: daytona
+  delete: true
+agents:
+  - import_path: arc_agi_2_autoadapter.parity_agent:ArcHarnessAgent
+    model_name: openai/deepseek-v4.1-flash
+    kwargs:
+      max_tokens: 131072
+      stream: true
+      retry_attempts: 2
+datasets:
+  - path: datasets/arc-agi-2-autoadapter

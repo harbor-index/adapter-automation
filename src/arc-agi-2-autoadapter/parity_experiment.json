@@ -1,0 +1,40 @@
+[
+  {
+    "adapter_name": "arc-agi-2-autoadapter",
+    "agent": "arc-harness-chat@1.0.0",
+    "model": "deepseek-v4.1-flash",
+    "date": "2026-11-06",
+    "adapted_benchmark_size": 167,
+    "parity_benchmark_size": 167,
+    "number_of_runs": 3,
+    "notes": "Full ARC-AGI-2 public evaluation set: 120 ARC tasks = 167 Harbor tasks (one per test input). Metric: official ARC-AGI-2 score in percent (2 attempts per test input; a task scores its fraction of solved test inputs; mean over the 120 tasks). Original side: arcprize/arc-agi-benchmarking at 54629ad8 (fork branch harbor-parity; the runs used commit ccbedea, later commits change only the README), provider openai, config deepseek-v4.1-flash-harbor-parity, cli/run_all.py --num_attempts 2 --retry_attempts 2, scored with scoring/scoring.py. Harbor side: parity agent arc_agi_2_autoadapter.parity_agent:ArcHarnessAgent (same Chat Completions call, parser and retry rule as the harness), harbor run -k 2 with Harbor 0.25.0 on Daytona, scored with arc-agi-2-autoadapter-score. Both sides: model deepseek-v4.1-flash through the same OpenAI-compatible gateway (the gateway reports the dated model ID deepseek-v4-1-flash-261017 in non-streaming responses and in streaming chunks; checked 2026-11-06 before the runs and 2026-11-07 after them, see served_model_check.json in the parity upload), streaming, max_tokens 131072, no temperature; byte-identical prompts (official prompt + one output paragraph). Standard CLI agent check (Harbor only): claude-code@2.1.311 with the same model, see README.",
+    "original_parity_repo": "https://github.com/MrLYG/arc-agi-benchmarking/tree/harbor-parity",
+    "adapter_pr": [
+      "https://github.com/harbor-index/adapter-automation/pull/9"
+    ],
+    "dataset_pr": [
+      "https://github.com/harbor-framework/harbor-datasets/pull/276"
+    ],
+    "parity_pr": [
+      "https://huggingface.co/datasets/harborframework/parity-experiments/discussions/280"
+    ],
+    "metrics": [
+      {
+        "benchmark_name": "ARC-AGI-2",
+        "metric": "ARC-AGI-2 score (pass@2, %)",
+        "original": "77.08 ± 1.32",
+        "harbor": "77.59 ± 0.67",
+        "original_runs": [
+          79.44,
+          76.94,
+          74.86
+        ],
+        "harbor_runs": [
+          78.19,
+          76.25,
+          78.33
+        ]
+      }
+    ]
+  }
+]
