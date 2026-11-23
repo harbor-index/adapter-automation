@@ -29,6 +29,11 @@ const record = name => async args => { calls.push({name, args}); return {}; };
 const github = {
   paginate: async () => input.comments || [],
   rest: {
+    repos: {getLatestRelease: async args => {
+      calls.push({name: 'release', args});
+      if (!input.tag) throw new Error('unavailable');
+      return {data: {tag_name: input.tag}};
+    }},
     pulls: {get: async args => { calls.push({name: 'get', args}); return {data: input.pr}; }},
     issues: {
       listComments: async () => {},
@@ -38,6 +43,8 @@ const github = {
   },
 };
 const core = {
+  setOutput: (key, value) => calls.push({name: 'output', key, value}),
+  warning: message => calls.push({name: 'warning', message}),
   notice: message => calls.push({name: 'notice', message}),
   setFailed: message => calls.push({name: 'failed', message}),
 };
@@ -85,6 +92,21 @@ class ReviewWorkflowTests(unittest.TestCase):
         self.assertNotIn('untrusted PR instructions', output)
         self.assertIn(f"adapters/blob/{'a' * 40}/docs/parity-diagnostics.md", output)
         self.assertIn(f"adapter-automation/blob/{'b' * 40}/skills/review-adapter/SKILL.md", output)
+
+    def test_stable_release_lookup(self):
+        script = step('ai-review', 'Look up the latest stable Harbor release')['with']['script']
+        for tag in ('v1.2.3', None):
+            with self.subTest(tag=tag):
+                result = subprocess.run(
+                    ['node', '-e', NODE_RUNNER], input=json.dumps({'script': script, 'tag': tag}),
+                    capture_output=True, text=True, check=True,
+                )
+                request, outcome = json.loads(result.stdout)
+                self.assertEqual(request['args'], {'owner': 'harbor-framework', 'repo': 'harbor'})
+                if tag:
+                    self.assertEqual(outcome, {'name': 'output', 'key': 'tag', 'value': tag})
+                else:
+                    self.assertEqual(outcome['name'], 'warning')
 
     def test_guidance_supports_consumers_before_the_doc_move(self):
         result, output = self.run_guidance('skills/review-adapter/references/parity-diagnostics.md')

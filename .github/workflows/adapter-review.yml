@@ -223,6 +223,21 @@ jobs:
               core.setFailed('PR closed or changed since validation. Comment /review-adapter again.');
             }
 
+      - name: Look up the latest stable Harbor release
+        id: harbor-release
+        uses: actions/github-script@v9
+        with:
+          retries: 3
+          script: |
+            try {
+              const { data } = await github.rest.repos.getLatestRelease({
+                owner: 'harbor-framework', repo: 'harbor',
+              });
+              core.setOutput('tag', data.tag_name);
+            } catch (error) {
+              core.warning(`Harbor release lookup failed: ${error.message}`);
+            }
+
       - name: Load trusted review guidance
         id: review-guidance
         shell: python
@@ -302,6 +317,7 @@ jobs:
             Apply the review guidance embedded below from the pinned automation and trusted adapter checkouts.
             Use the diagnostic sections when relevant to the adapter being reviewed.
             Resolve relative links against each source URL using the source file's directory.
+            Official stable Harbor release at review time: ${{ steps.harbor-release.outputs.tag || 'unavailable' }}.
             Review implementation revision: ${{ inputs.automation-ref }}.
             <Trusted Review Guidance>
             ${{ steps.review-guidance.outputs.content }}
@@ -327,7 +343,7 @@ jobs:
             This workflow is read-only: do not execute code or claim independent execution.
             Cite adapter code with exact line ranges at
             https://github.com/${{ needs.structural-validation.outputs.repository }}/blob/${{ needs.structural-validation.outputs.sha }}/src/...
-            If review history is unavailable, say so rather than claiming no prior findings exist.
+            Check prior findings against this revision before raising them again.
 
             ## 1. Adapter code layout and logic
             New src/ layout (per adapters.mdx): adapter code lives at `src/<adapter_name>/`
