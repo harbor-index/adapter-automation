@@ -4,7 +4,7 @@
 Inputs: --stats (trusted stats.json from stats.py), compare/meta.json (prepare job),
 work/verdict.json and work/analysis.md (Claude), and the workflow env
 (PREPARE_RESULT, PR_URL, PR_SHA, AUTHOR, ADAPTER, HARBOR_VERSION, RUN_URL, AGENT, AGENT_MODEL,
-TIMEOUT_MULTIPLIER).
+TIMEOUT_MULTIPLIER, VERIFIER_ENV).
 result.json holds the text for the Verification cell:
   human: 66.67 ± 0.67
   auto: 66.33 ± 1.45
@@ -100,6 +100,9 @@ def report_md(env, meta, stats, cell, verdict, source, analysis):
            f"| Harbor | {env.get('HARBOR_VERSION', '')} |",
            f"| Agent | {env.get('AGENT', '')} + {env.get('AGENT_MODEL', '')} |",
            f"| Time limits | task time limits x {env.get('TIMEOUT_MULTIPLIER', '')} |"]
+    verifier_env = json.loads(env.get("VERIFIER_ENV") or "{}")
+    if verifier_env:
+        out.append("| Verifier env | " + ", ".join(f"{k}={v}" for k, v in verifier_env.items()) + " |")
     if meta.get("status") == "ok":
         out += [
             f"| Auto adapter | `{meta.get('auto_adapter')}`; dataset harbor-framework/harbor-datasets"

@@ -24,6 +24,9 @@ the default of the workflow `env`:
 | `timeout-multiplier` | Harbor multiplies every task time limit by this value, on both sides | `TIMEOUT_MULTIPLIER` |
 | `model` | model of the agent, the name that the model gateway uses | `AGENT_MODEL` |
 | `concurrency` | trials that one run job runs at the same time | `N_CONCURRENT` |
+| `verifier-env=NAME=value` | one variable for the verifier of each task, on both sides; it replaces the value of the task.toml; can be given more than one time | none |
+
+Example for a benchmark with an LLM judge: `/compare-auto-with-human verifier-env=JUDGE_MODEL=gpt-5-mini`.
 
 Only owners, members and collaborators of this repository can start it. Comment again
 to run it again. The result goes to the tracking sheet and to the run summary; the pull

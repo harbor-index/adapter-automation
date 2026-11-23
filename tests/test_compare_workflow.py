@@ -250,14 +250,31 @@ class OptionsTest(unittest.TestCase):
     def test_defaults_come_from_the_workflow_env(self):
         for body in ['/compare-auto-with-human', '/compare-auto-with-human  \nmodel=x on line 2']:
             self.assertEqual(options.parse(body, self.ENV),
-                             {'timeout_multiplier': '1', 'agent_model': 'default', 'n_concurrent': '40'})
+                             {'timeout_multiplier': '1', 'agent_model': 'default', 'n_concurrent': '40',
+                              'verifier_env': '{}'})
 
     def test_comment_settings_replace_the_defaults(self):
         body = '/compare-auto-with-human timeout-multiplier=2.5 model=deepseek-v4.1-flash concurrency=10'
         self.assertEqual(options.parse(body, self.ENV),
                          {'timeout_multiplier': '2.5', 'agent_model': 'deepseek-v4.1-flash',
-                          'n_concurrent': '10'})
+                          'n_concurrent': '10', 'verifier_env': '{}'})
         self.assertEqual(options.parse('/compare-auto-with-human concurrency=5', self.ENV)['timeout_multiplier'], '1')
+
+    def test_verifier_env_goes_to_the_job_config_and_the_report(self):
+        body = '/compare-auto-with-human verifier-env=JUDGE_MODEL=gpt-5-mini verifier-env=JUDGE_EFFORT=low'
+        given = options.parse(body, self.ENV)['verifier_env']
+        self.assertEqual(json.loads(given), {'JUDGE_MODEL': 'gpt-5-mini', 'JUDGE_EFFORT': 'low'})
+        env = {**JobConfigTest.ENV, 'VERIFIER_ENV': given}
+        self.assertEqual(job_config.build('human', 'run1', 5, env)['verifier'],
+                         {'env': {'JUDGE_MODEL': 'gpt-5-mini', 'JUDGE_EFFORT': 'low'}})
+        for empty in ({}, {'VERIFIER_ENV': ''}, {'VERIFIER_ENV': '{}'}):
+            self.assertNotIn('verifier', job_config.build('auto', 'run1', 5, {**JobConfigTest.ENV, **empty}))
+        for words in ['verifier-env=JUDGE_MODEL', 'verifier-env=judge=x', 'verifier-env=A=b;c',
+                      'verifier-env=A=$(id)', 'verifier-env=A=1 verifier-env=A=2', 'verifier-env']:
+            with self.assertRaises(ValueError, msg=words):
+                options.parse(f'/compare-auto-with-human {words}', self.ENV)
+        for job, name in [('run', 'Run Harbor'), ('report', 'Write the report')]:
+            self.assertEqual(step(job, name)['env']['VERIFIER_ENV'], '${{ needs.check.outputs.verifier_env }}')
 
     def test_bad_settings_fail(self):
         for words in ['timeout=5', 'model', 'timeout-multiplier=0', 'timeout-multiplier=fast',

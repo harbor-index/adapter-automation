@@ -60,6 +60,7 @@ jobs:
       agent_model: ${{ steps.options.outputs.agent_model }}
       timeout_multiplier: ${{ steps.options.outputs.timeout_multiplier }}
       n_concurrent: ${{ steps.options.outputs.n_concurrent }}
+      verifier_env: ${{ steps.options.outputs.verifier_env }}
     steps:
       - name: Read the pull request
         id: pr
@@ -111,16 +112,18 @@ jobs:
           MODEL: ${{ steps.options.outputs.agent_model }}
           MULTIPLIER: ${{ steps.options.outputs.timeout_multiplier }}
           CONCURRENT: ${{ steps.options.outputs.n_concurrent }}
+          VERIFIER_ENV: ${{ steps.options.outputs.verifier_env }}
         with:
           script: |
             await github.rest.reactions.createForIssueComment({
               ...context.repo, comment_id: context.payload.comment.id, content: 'eyes' });
             const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const verifierEnv = process.env.VERIFIER_ENV === '{}' ? '' : `, verifier env ${process.env.VERIFIER_ENV}`;
             await github.rest.issues.createComment({
               ...context.repo, issue_number: context.issue.number,
               body: `Comparison started for \`${process.env.ADAPTER}\` at ${process.env.SHA.slice(0, 7)} ` +
                     `(Harbor ${process.env.HARBOR}, ${process.env.MODEL}, time limits x ${process.env.MULTIPLIER}, ` +
-                    `${process.env.CONCURRENT} trials at a time for each run job). Run: ${run}` });
+                    `${process.env.CONCURRENT} trials at a time for each run job${verifierEnv}). Run: ${run}` });
 
       - name: Report a start failure
         if: failure()
@@ -255,6 +258,7 @@ jobs:
           AGENT_MODEL: ${{ needs.check.outputs.agent_model }}
           TIMEOUT_MULTIPLIER: ${{ needs.check.outputs.timeout_multiplier }}
           N_CONCURRENT: ${{ needs.check.outputs.n_concurrent }}
+          VERIFIER_ENV: ${{ needs.check.outputs.verifier_env }}
         run: |
           python3 .github/compare/job_config.py --side "$SIDE" --run "$RUN" --pr "$PR_NUMBER" > job.json
           uvx --python 3.12 --from "harbor[daytona]==$HARBOR_VERSION" harbor run -c job.json -y
@@ -347,6 +351,7 @@ jobs:
           HARBOR_VERSION: ${{ needs.check.outputs.harbor }}
           AGENT_MODEL: ${{ needs.check.outputs.agent_model }}
           TIMEOUT_MULTIPLIER: ${{ needs.check.outputs.timeout_multiplier }}
+          VERIFIER_ENV: ${{ needs.check.outputs.verifier_env }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           python3 "$RUNNER_TEMP/tools/report.py" --stats "$RUNNER_TEMP/stats/stats.json" \

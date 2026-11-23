@@ -7,7 +7,8 @@ Settings come from the workflow env: AGENT, AGENT_MODEL, AGENT_MAX_TOKENS,
 TIMEOUT_MULTIPLIER, N_CONCURRENT, MAX_RETRIES and OPENAI_BASE_URL. The agent reads
 OPENAI_API_KEY itself; no key is written into the config. AGENT_MODEL is the name that
 the model gateway uses. The gateway has the OpenAI API, so the agent's LiteLLM client
-gets the name with the prefix openai/.
+gets the name with the prefix openai/. VERIFIER_ENV (a JSON object, can be empty) holds
+variables for the verifier of each task; they replace the values of the task.toml.
 """
 import argparse
 import json
@@ -35,7 +36,7 @@ def build(side, run, pr, env):
             "llm_call_kwargs": {"max_tokens": int(env["AGENT_MAX_TOKENS"])},
         },
     }
-    return {
+    config = {
         "job_name": f"{side}-{run}",
         "jobs_dir": "jobs",
         "n_concurrent_trials": int(env["N_CONCURRENT"]),
@@ -51,6 +52,10 @@ def build(side, run, pr, env):
         "agents": [agent],
         "datasets": [{"path": f"compare/{side}"}],
     }
+    verifier_env = json.loads(env.get("VERIFIER_ENV") or "{}")
+    if verifier_env:
+        config["verifier"] = {"env": verifier_env}
+    return config
 
 
 def main():
