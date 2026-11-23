@@ -1,0 +1,28 @@
+[project]
+name = "harbor-evoeval-autoadapter-adapter"
+version = "0.1.0"
+description = "Harbor adapter for EvoEval (EvoEval_difficult by default): HumanEval problems evolved by LLMs, graded with the original EvoEval test inputs and checker."
+readme = "README.md"
+authors = [
+    { name = "Yuangang Li", email = "liyuangang66@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+evoeval-autoadapter = "evoeval_autoadapter.main:main"
+
+[dependency-groups]
+# Needed only to run the parity agent (`evoeval_autoadapter.codegen_agent`) through Harbor.
+parity = [
+    "harbor[daytona]==0.25.0",
+    "openai>=1.109.1",
+    "tiktoken>=0.12.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "evoeval_autoadapter"
