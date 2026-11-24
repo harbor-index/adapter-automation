@@ -1,0 +1,50 @@
+[
+  {
+    "adapter_name": "bfcl-autoadapter",
+    "adapter_builders": [
+      "Yuangang Li (liyuangang66@gmail.com)"
+    ],
+    "original_benchmark": [
+      {
+        "split": "single_turn",
+        "size": 3641,
+        "harness": "llm",
+        "supported_agents": [
+          "None"
+        ],
+        "adaptable": true,
+        "notes": "BFCL v4 single-turn categories (non-live: simple_python 400, simple_java 100, simple_javascript 50, multiple 200, parallel 200, parallel_multiple 200, irrelevance 240; live: live_simple 258, live_multiple 1053, live_parallel 16, live_parallel_multiple 24, live_irrelevance 884, live_relevance 16) at commit 6ea5797. The original harness queries model APIs directly (model handlers), with no agent framework."
+      },
+      {
+        "split": "multi_turn, web_search, memory, format_sensitivity",
+        "size": 1475,
+        "harness": "llm",
+        "supported_agents": [
+          "None"
+        ],
+        "adaptable": false,
+        "notes": "Not in the scope of this adapter: multi_turn (800), web_search (200, needs a SerpAPI key), memory (465), format_sensitivity (10 entries, non-scoring)."
+      }
+    ],
+    "harbor_adapter": [
+      {
+        "split": "single_turn",
+        "adapted_benchmark_size": 3635,
+        "parity_benchmark_size": 3635,
+        "parity_sampling_rate": 1.0,
+        "registry_benchmark_size": 3635,
+        "added_agents": [
+          "bfcl-fc-agent@1.0.0"
+        ],
+        "parity_matching_agents": [
+          "bfcl-fc-agent@1.0.0+deepseek-v4.1-flash"
+        ],
+        "parity_unmatching_agents": [
+          "None"
+        ],
+        "parity_costs": null,
+        "notes": "6 upstream entries that no answer can pass with the original checker are excluded (see README). bfcl-fc-agent reproduces BFCL's OpenAI-compatible function-calling harness. Parity on all 3635 tasks, 3 runs per side. parity_costs is null because the model endpoint reports no USD cost; token usage of all parity runs: 17.5M input, 5.3M output."
+      }
+    ]
+  }
+]
