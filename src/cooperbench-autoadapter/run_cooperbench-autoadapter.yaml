@@ -1,0 +1,34 @@
+# Reference config for the CooperBench adapter.
+#   harbor run -c src/cooperbench-autoadapter/run_cooperbench-autoadapter.yaml
+# Default: oracle on all 652 pairs. Switch the agent block to run the coop setting.
+jobs_dir: jobs
+n_attempts: 1
+timeout_multiplier: 1.0
+orchestrator:
+  type: local
+  n_concurrent_trials: 8
+  quiet: false
+environment:
+  type: daytona          # or: docker (needs Docker Compose v2)
+  delete: true
+datasets:
+  - path: datasets/cooperbench-autoadapter
+agents:
+  - name: oracle
+
+# CooperBench coop setting: two mini-swe-agent v2 agents (coop.yaml), one per feature, messaging on.
+# The agent runs in the Harbor process; install its dependencies there, e.g.
+#   uvx --python 3.12 --from "harbor[daytona,adapter]==0.25.0" \
+#       --with "./src/cooperbench-autoadapter[agent]" harbor run -c <this file>
+# agents:
+#   - import_path: cooperbench_autoadapter.coop_agent:CooperBenchCoopAgent
+#     model_name: openai/deepseek-v4.1-flash
+#     kwargs:
+#       messaging_enabled: true
+
+# Single-agent baselines (both features in one instruction, graded like the original solo setting):
+# agents:
+#   - name: claude-code
+#     model_name: anthropic/claude-sonnet-4-5
+#   - name: codex
+#     model_name: openai/gpt-5-mini

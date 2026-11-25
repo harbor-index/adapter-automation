@@ -1,0 +1,40 @@
+[
+  {
+    "adapter_name": "cooperbench-autoadapter",
+    "agent": "cooperbench-coop-mini-swe-agent-v2@63b9d44",
+    "model": "openai/deepseek-v4.1-flash",
+    "date": "2026-11-09",
+    "adapted_benchmark_size": 652,
+    "parity_benchmark_size": 15,
+    "number_of_runs": 3,
+    "notes": "Coop setting. Agent = CooperBench's own coop agent (two mini-swe-agent v2 agents at upstream commit 63b9d44, coop.yaml, step limit 100, messaging on, git off), vendored in the adapter as cooperbench_autoadapter.coop_agent:CooperBenchCoopAgent. Model openai/deepseek-v4.1-flash through the same OpenAI-compatible endpoint on both sides; every response was served by deepseek-v4-1-flash-261017. Parity set: 15 of 652 pairs (--split parity), stratified by repository, seed 42. Harbor 0.25.0 on Daytona (4 CPUs / 12 GB per pair, typst 8 / 16); original side: fork commit eb271c8 on Daytona, one pair at a time per 4-CPU / 12-GB sandbox. Metric: pass rate in % (both features' tests pass on the merged patches). Runs 2 and 3 ran at the same time on both sides. Oracle: 652/652. Standard agent check: Claude Code 2.1.311 with the same model, one agent for both features, 11/15 (one run).",
+    "original_parity_repo": "https://github.com/hanxu12/CooperBench/tree/harbor-parity",
+    "adapter_pr": [
+      "https://github.com/harbor-index/adapter-automation/pull/12"
+    ],
+    "dataset_pr": [
+      "https://github.com/harbor-framework/harbor-datasets/pull/279"
+    ],
+    "parity_pr": [
+      "https://huggingface.co/datasets/harborframework/parity-experiments/discussions/283"
+    ],
+    "metrics": [
+      {
+        "benchmark_name": "CooperBench",
+        "metric": "pass_rate",
+        "original": "55.56 ± 8.01",
+        "harbor": "55.56 ± 5.88",
+        "original_runs": [
+          66.67,
+          60.0,
+          40.0
+        ],
+        "harbor_runs": [
+          53.33,
+          46.67,
+          66.67
+        ]
+      }
+    ]
+  }
+]
